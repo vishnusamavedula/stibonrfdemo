@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:steprestapiv2="http://www.mulesoft.org/schema/mule/steprestapiv2" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/steprestapiv2 http://www.mulesoft.org/schema/mule/steprestapiv2/current/mule-steprestapiv2.xsd">
+	<flow name="demoProductCreateFlow" doc:id="054853ac-7b58-4cab-b6fd-463e0eaea176" >
+		<http:listener doc:name="/getApparel" doc:id="8ac805a7-40ad-4081-a57e-a28b955c0780" config-ref="HTTP_Listener_config"/>
+		<flow-ref doc:name="Flow Reference" doc:id="7837529f-f9ed-4723-95da-44e16d70bcc8" name="datasource"/>
+		<ee:transform doc:name="Transform Product payload" doc:id="fdf9a8c0-ec55-4158-83a2-a12b0a87ce24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<steprestapiv2:create-product doc:name="Create product" doc:id="8cab5af8-91cb-424a-85b5-42920fe0e149" />
+		<ee:transform doc:name="Record response" doc:id="c0ebdcd7-8016-46d2-9e93-6279b6670b76" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="datasource" doc:id="2ebce0b5-6c93-4e40-b5e3-5206b7ec0693" >
+		<choice doc:name="Choice" doc:id="12c0d67d-c68a-44e7-8e8d-845bd234506c" >
+			<when >
+				<db:select doc:id="64f16139-71c4-41a9-be69-c1a6f376f68f" />
+				<logger level="INFO" doc:name="Logger" doc:id="1e34ea64-0288-4f80-aa38-ced0958ded55" />
+			</when>
+			<otherwise >
+				<db:select doc:name="Select" doc:id="b95b3573-5611-4f1d-8781-8e85cd910edb" />
+				<logger level="INFO" doc:name="Logger" doc:id="1c07d3fa-3233-4ec8-89eb-400c034def72" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

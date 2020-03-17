@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:steprestapiv2="http://www.mulesoft.org/schema/mule/steprestapiv2" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/steprestapiv2 http://www.mulesoft.org/schema/mule/steprestapiv2/current/mule-steprestapiv2.xsd">
+	<flow name="retailAddFlow" doc:id="2dbfd6ee-3b16-4385-b2fc-5a91c1956863" >
+		<http:listener doc:name="sendToRetail" doc:id="29b59e35-3ea2-4999-96e2-00dbf33565fb" config-ref="HTTP_Listener_config" path="/send"/>
+		<steprestapiv2:get-product-by-id doc:name="Get product by id" doc:id="98c373c5-2402-4dcd-940d-758848bc454c" config-ref="STEP_REST_API_V2_Config" context="GL" id="152134"/>
+		<ee:transform doc:name="Transform Payload for Retail Add" doc:id="71316ecc-6edf-4349-a801-72971c0e2803" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="RetailEndpoint" doc:id="2d44fba2-0ac6-4ee6-8ebc-6d9cec8eeaef" name="retail1" />
+		<logger level="INFO" doc:name="Logger" doc:id="c76ab207-cc01-4eb7-b964-dc9eda6bd264" />
+	</flow>
+	<flow name="retail1" doc:id="5b4bec87-7fb4-4e18-a98c-31c310843763" >
+		<http:request method="GET" doc:name="RetailEndpoint" doc:id="d79012c8-c4b0-44a9-97f4-8264d128dc7f" config-ref="HTTP_Request_configuration" path="/retail"/>
+		<ee:transform doc:name="Response" doc:id="f140fe88-a626-4903-9d68-1504ccfe14cc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="30d50585-505f-4df3-ba08-3c911009d1cb" />
+	</flow>
+</mule>
